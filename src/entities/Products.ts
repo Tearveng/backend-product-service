@@ -1,8 +1,8 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -14,7 +14,7 @@ export class ProductsEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column('text')
   description: string;
 
   @Column()
