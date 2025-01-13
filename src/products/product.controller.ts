@@ -8,14 +8,18 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductsEntity } from '../entities/Products';
 import { ProductService } from './product.service';
 
+@ApiTags('products')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post('/create-products')
+  @ApiOperation({ summary: 'Create product' })
+  @ApiResponse({ status: 200, description: 'Product is registered' })
   async create(@Body() payload: ProductsEntity) {
     return this.productService.createProduct(payload);
   }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductModule } from './products/product.module';
-import { DataSource } from 'typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfig } from './config';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ProductModule } from './products/product.module';
 
 @Module({
   imports: [
