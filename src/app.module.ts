@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseConfig } from './config';
 import { ProductModule } from './products/product.module';
+import {CloudinaryModule} from "./shared/cloudinary/cloudinary.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProductModule } from './products/product.module';
       inject: [ConfigService],
     }),
     ProductModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
