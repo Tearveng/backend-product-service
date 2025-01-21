@@ -52,6 +52,9 @@ export class ProductService {
   // find all products pagination
   async paginateProducts(page = 1, limit = 10) {
     const [products, total] = await this.productRepository.findAndCount({
+      order: {
+        createdAt: 'desc',
+      },
       skip: (page - 1) * limit,
       take: limit,
     });

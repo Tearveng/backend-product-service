@@ -18,7 +18,7 @@ export class CloudinaryService {
     try {
       return await new Promise((resolve, reject) => {
         const upload = uploadV2.uploader.upload_stream(
-          { folder: 'eii-kommerce' },
+          { folder: process.env.CLOUDINARY_FOLDER_NAME },
           (error, result) => {
             if (error) {
               return reject(error);
@@ -43,9 +43,9 @@ export class CloudinaryService {
             reject(error);
           } else {
             resolve({
-              message: 'File deleted successfully',
-              imageUrl: result.url,
-              public_id: result.public_id,
+              message: 'Image deleted successfully',
+              public_id: publicId.split('/')[1],
+              ...result,
             });
           }
         });

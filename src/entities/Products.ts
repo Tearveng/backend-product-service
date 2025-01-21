@@ -14,7 +14,7 @@ export class ProductsEntity {
   @Column()
   name: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   description: string;
 
   @Column()
@@ -28,6 +28,9 @@ export class ProductsEntity {
 
   @Column()
   quantity: number;
+
+  @Column({ default: null })
+  publicId: string | null;
 
   @Column({ default: null })
   thumbnail: string | null;
