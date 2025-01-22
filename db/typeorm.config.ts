@@ -1,6 +1,6 @@
+import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { config } from 'dotenv';
 import { ProductsEntity } from '../src/entities/Products';
 
 config();
@@ -19,5 +19,5 @@ export default new DataSource({
   synchronize: false,
   logging: configService.get('nodenv') === 'development',
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
-  migrationsTableName: 'migrations',
+  migrationsTableName: 'product_migrations',
 });

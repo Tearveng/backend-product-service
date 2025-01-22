@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseConfig } from './config';
 import { ProductModule } from './products/product.module';
-import {CloudinaryModule} from "./shared/cloudinary/cloudinary.module";
+import { CloudinaryModule } from './shared/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
