@@ -125,7 +125,7 @@ export class ProductService {
     const [products, total] = await this.productRepository
       .createQueryBuilder('product')
       .where('product.name like :name', { name: `%${name}%` })
-      .orWhere('product.description like :name', { description: `%${name}%` })
+      .orWhere('product.code like :name', { code: `%${name}%` })
       .orWhere('product.skuCode like :name', { skuCode: `%${name}%` })
       .take(limit)
       .skip((page - 1) * limit)
