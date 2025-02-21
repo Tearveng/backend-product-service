@@ -162,9 +162,10 @@ export class ProductService {
       const missingIds = ids.filter(
         (id: string | number) => !foundIds.includes(id),
       );
+
       if (missingIds.length > 0) {
         throw new BadRequestException(
-          `The following products were not found: ${missingIds} ${missingIds.join(', ')}`,
+          `The following products were not found: ${missingIds.join(', ')}`,
         );
       }
     }
