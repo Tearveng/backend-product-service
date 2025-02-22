@@ -6,8 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductsEntity } from '../entities/Products';
 import { In, Repository } from 'typeorm';
+import { ProductsEntity } from '../entities/Products';
 
 @Injectable()
 export class ProductService {
@@ -125,8 +125,8 @@ export class ProductService {
     const [products, total] = await this.productRepository
       .createQueryBuilder('product')
       .where('product.name like :name', { name: `%${name}%` })
-      .orWhere('product.code like :name', { code: `%${name}%` })
-      .orWhere('product.skuCode like :name', { skuCode: `%${name}%` })
+      .orWhere('product.code like :code', { code: `%${name}%` })
+      // .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
       .take(limit)
       .skip((page - 1) * limit)
       .getManyAndCount();

@@ -31,6 +31,6 @@ async function bootstrap() {
     // customJs: '/public/swagger-custom.js', // Custom JS (if needed)
     customSiteTitle: 'Swagger - Products', // Custom site title
   }); // This will expose Swagger UI at /api
-  await app.listen(4000);
+  await app.listen(4000, '0.0.0.0');
 }
 bootstrap();
