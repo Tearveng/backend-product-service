@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { StocksEntity } from 'src/entities/Stocks';
 import { ProductsEntity } from '../entities/Products';
 
 export default registerAs('database', () => ({
@@ -8,8 +9,8 @@ export default registerAs('database', () => ({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME, //'eiii_kommerce'
-  entities: [ProductsEntity],
-  synchronize: false,
+  entities: [ProductsEntity, StocksEntity],
+  synchronize: true,
   logging: process.env.NODE_ENV === 'development',
   migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],
   migrationsTableName: 'product_migrations',

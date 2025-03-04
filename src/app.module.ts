@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { DatabaseConfig } from './config';
 import { ProductModule } from './products/product.module';
 import { CloudinaryModule } from './shared/cloudinary/cloudinary.module';
+import { StockModule } from './stocks/stock.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CloudinaryModule } from './shared/cloudinary/cloudinary.module';
     }),
     ProductModule,
     CloudinaryModule,
+    StockModule
   ],
   controllers: [AppController],
   providers: [AppService],

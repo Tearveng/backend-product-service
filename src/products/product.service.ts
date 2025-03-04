@@ -126,7 +126,7 @@ export class ProductService {
       .createQueryBuilder('product')
       .where('product.name like :name', { name: `%${name}%` })
       .orWhere('product.code like :code', { code: `%${name}%` })
-      // .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
+      .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
       .take(limit)
       .skip((page - 1) * limit)
       .getManyAndCount();
@@ -154,7 +154,6 @@ export class ProductService {
     const products = await this.productRepository.find({
       where: { [keyFind]: In(ids as string[]) },
     });
-
     if (products.length < ids.length) {
       const foundIds = products.map(
         (product: ProductsEntity) => product[keyFind],
@@ -162,10 +161,15 @@ export class ProductService {
       const missingIds = ids.filter(
         (id: string | number) => !foundIds.includes(id),
       );
+      console.log("missingIds", missingIds)
 
       if (missingIds.length > 0) {
         throw new BadRequestException(
-          `The following products were not found: ${missingIds.join(', ')}`,
+          `The following products were not found: [${missingIds.join(', ')}]`,
+        );
+      }else {
+        throw new BadRequestException(
+          `The following products were duplicate: []`,
         );
       }
     }
