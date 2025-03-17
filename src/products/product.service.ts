@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { ProductsEntity } from '../entities/Products';
 
 @Injectable()
@@ -51,12 +51,17 @@ export class ProductService {
 
   // find all products pagination
   async paginateProducts(page = 1, limit = 10) {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const [products, total] = await this.productRepository.findAndCount({
       order: {
         createdAt: 'desc',
       },
       skip: (page - 1) * limit,
       take: limit,
+    });
+    const [, totalLastThirtyDays] = await this.productRepository.findAndCount({
+      where: { createdAt: MoreThanOrEqual(thirtyDaysAgo) },
     });
 
     return {
@@ -67,6 +72,7 @@ export class ProductService {
         itemsPerPage: limit,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
+        totalThirtyDays: totalLastThirtyDays,
       },
     };
   }
@@ -161,13 +167,13 @@ export class ProductService {
       const missingIds = ids.filter(
         (id: string | number) => !foundIds.includes(id),
       );
-      console.log("missingIds", missingIds)
+      console.log('missingIds', missingIds);
 
       if (missingIds.length > 0) {
         throw new BadRequestException(
           `The following products were not found: [${missingIds.join(', ')}]`,
         );
-      }else {
+      } else {
         throw new BadRequestException(
           `The following products were duplicate: []`,
         );
