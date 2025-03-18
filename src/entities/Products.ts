@@ -40,4 +40,6 @@ export class ProductsEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+
 }
