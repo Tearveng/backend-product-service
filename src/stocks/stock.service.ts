@@ -145,10 +145,10 @@ export class StockService {
   async searchStock(name: string, type: string, page = 1, limit = 10) {
     const [products, total] = await this.stockRepository
       .createQueryBuilder('stock')
-      .where('stock.type', { type })
       .where('stock.name like :name', { name: `%${name}%` })
+      .andWhere('stock.type = :type', { type })
       .orWhere('stock.code like :code', { code: `%${name}%` })
-      // .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
+      .andWhere('stock.type = :type', { type })
       .take(limit)
       .skip((page - 1) * limit)
       .getManyAndCount();
