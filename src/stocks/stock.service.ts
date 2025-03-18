@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StocksEntity } from 'src/entities/Stocks';
 import { ProductService } from 'src/products/product.service';
+import { omit } from 'src/utils/RemoveAttribute';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -27,33 +33,33 @@ export class StockService {
   //     return product;
   //   }
 
-  //   // find product by id
-  //   async findById(id: number) {
-  //     const product = await this.productRepository.findOneBy({
-  //       id,
-  //     });
-  //     if (!product) {
-  //       this.logger.error('product not found with this id', id);
-  //       throw new NotFoundException('Product not found');
-  //     }
-  //     this.logger.log(`[Product]: ${JSON.stringify(product, null, 2)}`);
-  //     return product;
-  //   }
+  // find stock by id
+  async findById(id: number) {
+    const stock = await this.stockRepository.findOneBy({
+      id,
+    });
+    if (!stock) {
+      this.logger.error('stock not found with this id', id);
+      throw new NotFoundException('Stock not found');
+    }
+    this.logger.log(`[Product]: ${JSON.stringify(stock, null, 2)}`);
+    return stock;
+  }
 
-  //   // find all products
-  //   async findAll(): Promise<ProductsEntity[]> {
-  //     return this.productRepository.find();
-  //   }
+  // find all stocks
+  async findAll(): Promise<StocksEntity[]> {
+    return this.stockRepository.find();
+  }
 
   // find stocks tyoe
   findStockByType = (type: string) => {
-    return ['STOCK', 'PRE-STOCK'].indexOf(type) > -1;
-  }
+    return ['STOCK', 'PRE-STOCK', 'LIVE'].indexOf(type) > -1;
+  };
 
   // find all stocks pagination
   async paginateStocks(page = 1, limit = 10, type: string = 'STOCK') {
     const correctType = this.findStockByType(type);
-    if(!correctType) {
+    if (!correctType) {
       this.logger.log(`stock type not found: ${type}`);
       throw new BadRequestException(`Stock type not found: ${type}`);
     }
@@ -103,54 +109,60 @@ export class StockService {
 
   // create stock
   async createStock(product: StocksEntity) {
-    const getById = await this.productService.findBySkuCode(product.skuCode);
+    const getById = await this.productService.findByCode(product.code);
+    console.log(
+      "omit(getById, 'createdAt', 'updatedAt')",
+      omit(getById, 'createdAt', 'updatedAt'),
+    );
     const create = this.stockRepository.create({
-      ...getById,
+      ...omit(getById, 'id', 'createdAt', 'updatedAt'),
       ...product,
     });
+    console.log('create', create);
     const save = await this.stockRepository.save(create);
     this.logger.log('stock is registered', save);
     return save;
   }
 
-  //   // update product
-  //   async updateProduct(id: number, product: ProductsEntity) {
-  //     const previous = await this.findById(id);
-  //     const save = await this.productRepository.save({
-  //       ...previous,
-  //       ...product,
-  //     });
-  //     this.logger.log('product is updated', save);
-  //     return save;
-  //   }
+  // update stock
+  async updateStock(id: number, product: StocksEntity) {
+    const previous = await this.findById(id);
+    const save = await this.stockRepository.save({
+      ...previous,
+      ...product,
+    });
+    this.logger.log('stock is updated', save);
+    return save;
+  }
 
-  //   // delete product
-  //   async deleteProduct(id: number) {
-  //     this.logger.log('product is deleted', id);
-  //     return this.productRepository.delete(id);
-  //   }
+  // delete stock
+  async deleteStock(id: number) {
+    this.logger.log('stock is deleted', id);
+    return this.stockRepository.delete(id);
+  }
 
-  //   // search product
-  //   async searchProduct(name: string, page = 1, limit = 10) {
-  //     const [products, total] = await this.productRepository
-  //       .createQueryBuilder('product')
-  //       .where('product.name like :name', { name: `%${name}%` })
-  //       .orWhere('product.code like :code', { code: `%${name}%` })
-  //       // .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
-  //       .take(limit)
-  //       .skip((page - 1) * limit)
-  //       .getManyAndCount();
-  //     return {
-  //       data: products,
-  //       meta: {
-  //         totalItems: total,
-  //         itemCount: products.length,
-  //         itemsPerPage: limit,
-  //         totalPages: Math.ceil(total / limit),
-  //         currentPage: page,
-  //       },
-  //     };
-  //   }
+  // search stock
+  async searchStock(name: string, type: string, page = 1, limit = 10) {
+    const [products, total] = await this.stockRepository
+      .createQueryBuilder('stock')
+      .where('stock.type', { type })
+      .where('stock.name like :name', { name: `%${name}%` })
+      .orWhere('stock.code like :code', { code: `%${name}%` })
+      // .orWhere('product.skuCode like :skuCode', { skuCode: `%${name}%` })
+      .take(limit)
+      .skip((page - 1) * limit)
+      .getManyAndCount();
+    return {
+      data: products,
+      meta: {
+        totalItems: total,
+        itemCount: products.length,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      },
+    };
+  }
 
   //   // find products ids
   //   async findProductsByIds(ids: (number | string)[]): Promise<ProductsEntity[]> {

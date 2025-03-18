@@ -13,11 +13,14 @@ export class StocksEntity {
 
   @Column()
   name: string;
-
-  @Column({ unique: true })
-  code: string;
+  
+  @Column('text', { nullable: true })
+  description: string;
 
   @Column()
+  code: string;
+
+  @Column({ unique: true })
   skuCode: string;
 
   @Column()

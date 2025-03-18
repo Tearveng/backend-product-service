@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
-  Query
+  Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StocksEntity } from 'src/entities/Stocks';
@@ -21,43 +24,46 @@ export class StockController {
     return this.stockService.createStock(payload);
   }
 
-//   @Put('/update-products/:id')
-//   async update(@Param('id') id: number, @Body() payload: ProductsEntity) {
-//     return this.productService.updateProduct(id, payload);
-//   }
+  @Put('/update-stocks/:id')
+  async update(@Param('id') id: number, @Body() payload: StocksEntity) {
+    return this.stockService.updateStock(id, payload);
+  }
 
-//   @Delete('/delete-products/:id')
-//   async delete(@Param('id') id: number) {
-//     return this.productService.deleteProduct(id);
-//   }
+  @Delete('/delete-stocks/:id')
+  async delete(@Param('id') id: number) {
+    return this.stockService.deleteStock(id);
+  }
 
-//   @Get('/product/:id')
-//   async getById(@Param('id') id: number) {
-//     return this.productService.findById(id);
-//   }
+  @Get('/stock/:id')
+  async getById(@Param('id') id: number) {
+    return this.stockService.findById(id);
+  }
 
   @Get()
   async getAllStocksPagination(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Query('type') type: string
+    @Query('type') type: string = 'STOCK',
   ) {
     return this.stockService.paginateStocks(page, limit, type);
   }
 
-//   @Get('/search-products')
-//   async searchProducts(@Query('search') search: string) {
-//     return this.productService.searchProduct(search);
-//   }
+  @Get('/search-stocks')
+  async searchProducts(
+    @Query('search') search: string,
+    @Query('type') type: string,
+  ) {
+    return this.stockService.searchStock(search, type);
+  }
 
-//   @Get('/multiple-products')
-//   async getProductById(@Query('ids') ids: string) {
-//     const idsArray = ids.split(',').map((id) => {
-//       if (typeof id === 'string') {
-//         return id;
-//       }
-//       return parseInt(id, 10);
-//     });
-//     return this.productService.findProductsByIds(idsArray);
-//   }
+  //   @Get('/multiple-products')
+  //   async getProductById(@Query('ids') ids: string) {
+  //     const idsArray = ids.split(',').map((id) => {
+  //       if (typeof id === 'string') {
+  //         return id;
+  //       }
+  //       return parseInt(id, 10);
+  //     });
+  //     return this.productService.findProductsByIds(idsArray);
+  //   }
 }

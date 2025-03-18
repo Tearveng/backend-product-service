@@ -30,6 +30,18 @@ export class ProductService {
     this.logger.log(`[Product]: ${JSON.stringify(product, null, 2)}`);
     return product;
   }
+  // find product by code
+  async findByCode(code: string) {
+    const product = await this.productRepository.findOneBy({
+      code,
+    });
+    if (!product) {
+      this.logger.error('product not found with this code', code);
+      throw new NotFoundException('Product not found');
+    }
+    this.logger.log(`[Product]: ${JSON.stringify(product, null, 2)}`);
+    return product;
+  }
 
   // find product by id
   async findById(id: number) {
