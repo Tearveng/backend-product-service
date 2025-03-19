@@ -13,7 +13,7 @@ export class StocksEntity {
 
   @Column()
   name: string;
-  
+
   @Column('text', { nullable: true })
   description: string;
 

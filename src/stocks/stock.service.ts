@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -8,7 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StocksEntity } from 'src/entities/Stocks';
 import { ProductService } from 'src/products/product.service';
 import { omit } from 'src/utils/RemoveAttribute';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { Stock } from '../dto/StockDTO';
+import { eFindBySkuCode } from '../utils/EFoundBySkuCode';
 
 @Injectable()
 export class StockService {
@@ -164,39 +167,50 @@ export class StockService {
     };
   }
 
-  //   // find products ids
-  //   async findProductsByIds(ids: (number | string)[]): Promise<ProductsEntity[]> {
-  //     let keyFind = 'id';
-  //     if (!ids || ids.length === 0) {
-  //       throw new ForbiddenException('No Ids/skuCodes provided');
-  //     }
-  //     if (ids.every((i) => typeof i === 'string')) {
-  //       keyFind = 'skuCode';
-  //     }
-  //     const products = await this.productRepository.find({
-  //       where: { [keyFind]: In(ids as string[]) },
-  //     });
-  //     if (products.length < ids.length) {
-  //       const foundIds = products.map(
-  //         (product: ProductsEntity) => product[keyFind],
-  //       );
-  //       const missingIds = ids.filter(
-  //         (id: string | number) => !foundIds.includes(id),
-  //       );
-  //       console.log("missingIds", missingIds)
+  // stock sold
+  async stockSold(stocks: Stock[]) {
+    const stockSkuCode = stocks.flatMap((stock) => stock.skuCode);
+    const filterStocks = await this.stockRepository.find({
+      where: { ['skuCode']: In(stockSkuCode as string[]) },
+    });
+    const soldOut = filterStocks.map((stock) => ({
+      ...stock,
+      quantity: stock.quantity - eFindBySkuCode(stock.skuCode, stocks).quantity,
+    }));
+    console.log('filterStocks', soldOut);
+    return await this.stockRepository.save(soldOut);
+  }
 
-  //       if (missingIds.length > 0) {
-  //         throw new BadRequestException(
-  //           `The following products were not found: [${missingIds.join(', ')}]`,
-  //         );
-  //       }else {
-  //         throw new BadRequestException(
-  //           `The following products were duplicate: []`,
-  //         );
-  //       }
-  //     }
+  // find products ids
+  async findStocksByIds(ids: (number | string)[]): Promise<StocksEntity[]> {
+    let keyFind = 'id';
+    if (!ids || ids.length === 0) {
+      throw new ForbiddenException('No Ids/skuCodes provided');
+    }
+    if (ids.every((i) => typeof i === 'string')) {
+      keyFind = 'skuCode';
+    }
+    const stocks = await this.stockRepository.find({
+      where: { [keyFind]: In(ids as string[]) },
+    });
+    if (stocks.length < ids.length) {
+      const foundIds = stocks.map((stock: StocksEntity) => stock[keyFind]);
+      const missingIds = ids.filter(
+        (id: string | number) => !foundIds.includes(id),
+      );
 
-  //     this.logger.log('products are found', products);
-  //     return products;
-  //   }
+      if (missingIds.length > 0) {
+        throw new BadRequestException(
+          `The following stocks were not found: [${missingIds.join(', ')}]`,
+        );
+      } else {
+        throw new BadRequestException(
+          `The following stocks were duplicate: []`,
+        );
+      }
+    }
+
+    this.logger.log('stocks are found', stocks);
+    return stocks;
+  }
 }

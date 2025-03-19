@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { ProductsEntity } from '../entities/Products';
+import { generateCodeProduct } from '../utils/generateCodeProduct';
 
 @Injectable()
 export class ProductService {
@@ -114,7 +115,10 @@ export class ProductService {
   // create product
   async createProduct(product: ProductsEntity) {
     await this.findExistBySkuCode(product.skuCode);
-    const create = this.productRepository.create(product);
+    const create = this.productRepository.create({
+      ...product,
+      code: generateCodeProduct(),
+    });
     const save = await this.productRepository.save(create);
 
     this.logger.log('product is registered', save);

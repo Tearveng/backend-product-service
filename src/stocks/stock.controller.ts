@@ -11,6 +11,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StocksEntity } from 'src/entities/Stocks';
 import { StockService } from './stock.service';
+import { Stock } from '../dto/StockDTO';
 
 @ApiTags('stocks')
 @Controller('stocks')
@@ -56,14 +57,20 @@ export class StockController {
     return this.stockService.searchStock(search, type);
   }
 
-  //   @Get('/multiple-products')
-  //   async getProductById(@Query('ids') ids: string) {
-  //     const idsArray = ids.split(',').map((id) => {
-  //       if (typeof id === 'string') {
-  //         return id;
-  //       }
-  //       return parseInt(id, 10);
-  //     });
-  //     return this.productService.findProductsByIds(idsArray);
-  //   }
+  @Get('/multiple-stocks')
+  async getStockById(@Query('ids') ids: string) {
+    const idsArray = ids.split(',').map((id) => {
+      if (typeof id === 'string') {
+        return id;
+      }
+      return parseInt(id, 10);
+    });
+    return this.stockService.findStocksByIds(idsArray);
+  }
+
+  @Post('/stock-sold')
+  async stockSold(@Body() payload: Stock[]) {
+    console.log('stocks', payload);
+    return this.stockService.stockSold(payload);
+  }
 }
