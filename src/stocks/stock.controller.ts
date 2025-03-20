@@ -40,6 +40,16 @@ export class StockController {
     return this.stockService.findById(id);
   }
 
+  @Get('/stock/code/:code')
+  async getByCode(@Param('code') code: string) {
+    return this.stockService.findByCode(code);
+  }
+
+  @Get('/stock/sku-code/:skuCode')
+  async getBySkuCode(@Param('skuCode') skuCode: string) {
+    return this.stockService.findBySkuCode(skuCode);
+  }
+
   @Get()
   async getAllStocksPagination(
     @Query('page') page = 1,

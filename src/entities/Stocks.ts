@@ -23,6 +23,9 @@ export class StocksEntity {
   @Column({ unique: true })
   skuCode: string;
 
+  @Column({ default: 0 })
+  discount: number;
+
   @Column()
   type: string;
 

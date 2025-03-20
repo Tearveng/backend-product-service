@@ -38,6 +38,11 @@ export class ProductController {
   async getById(@Param('id') id: number) {
     return this.productService.findById(id);
   }
+  @Get('/product/code/:code')
+  async getByCode(@Param('code') code: string) {
+    return this.productService.findByCode(code);
+  }
+
 
   @Get()
   async getAllProductsPagination(

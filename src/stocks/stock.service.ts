@@ -36,6 +36,31 @@ export class StockService {
   //     return product;
   //   }
 
+  // find stock by code
+  async findByCode(code: string) {
+    const stock = await this.stockRepository.findOneBy({
+      code,
+    });
+    if (!stock) {
+      this.logger.error('stock not found with this code', code);
+      throw new NotFoundException('Stock not found');
+    }
+    this.logger.log(`[Stock]: ${JSON.stringify(stock, null, 2)}`);
+    return stock;
+  }
+  // find stock by code
+  async findBySkuCode(skuCode: string) {
+    const stock = await this.stockRepository.findOneBy({
+      skuCode,
+    });
+    if (!stock) {
+      this.logger.error('stock not found with this skuCode', skuCode);
+      throw new NotFoundException('Stock not found');
+    }
+    this.logger.log(`[Stock]: ${JSON.stringify(stock, null, 2)}`);
+    return stock;
+  }
+
   // find stock by id
   async findById(id: number) {
     const stock = await this.stockRepository.findOneBy({
